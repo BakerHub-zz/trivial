@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  build:
+    docker:
+      # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
+      - image: circleci/golang:1.12
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+
+      - run:
+          name: Install
+          command: |
+            curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s v1.17.1
+            go get -v ./...
+
+      - run:
+          name: Lint
+          command: bin/golangci-lint run
+
+      - run:
+          name: Test
+          command: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+      - run: bash <(curl -s https://codecov.io/bash)
+
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "vendor"
+
+workflows:
+  version: 2
+  build-workflow:
+    jobs:
+      - build
