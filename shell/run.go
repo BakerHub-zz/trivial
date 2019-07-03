@@ -8,7 +8,7 @@ import (
 )
 
 func Run(name string, args ...string) {
-	cmd := exec.Command(name, args...)
+	cmd := exec.Command(name, args...) // #nosec
 	out, err := cmd.CombinedOutput()
 
 	if err != nil {

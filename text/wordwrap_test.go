@@ -19,6 +19,7 @@ func TestWordwrap(t *testing.T) {
 	}
 
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			got := Wordwrap(tc.text, tc.limit)
 			assert.Equal(t, tc.want, got)

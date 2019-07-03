@@ -1,6 +1,7 @@
 package text
 
 import (
+	"github.com/BakerHub/trivial/check"
 	"strings"
 	"unicode"
 )
@@ -63,7 +64,8 @@ func (ww *WordWrapper) append(lines []string, text string, needSeparator bool) [
 
 func (ww *WordWrapper) put(text string, w int) {
 	if w > 0 {
-		ww.builder.WriteString(text)
+		_, err := ww.builder.WriteString(text)
+		check.Check(err)
 		ww.used += w
 	}
 }

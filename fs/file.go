@@ -15,7 +15,7 @@ func MustClose(f io.Closer) {
 
 func MustCopyFile(src string, dst string) {
 	// Read all content of src to data
-	data, err := ioutil.ReadFile(src)
+	data, err := ioutil.ReadFile(src) // #nosec
 	check.Check(err)
 	// Write data to dst
 	err = ioutil.WriteFile(dst, data, 0644)
@@ -24,7 +24,7 @@ func MustCopyFile(src string, dst string) {
 
 func CopyFile(src string, dst string) error {
 	// Read all content of src to data
-	data, err := ioutil.ReadFile(src)
+	data, err := ioutil.ReadFile(src) // #nosec
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func EnsureDir(directory string) {
 	if Exists(directory) {
 		return
 	}
-	check.Check(os.MkdirAll(directory, 0777))
+	check.Check(os.MkdirAll(directory, 0750))
 }
 
 func ListDirectory(root string) []string {
@@ -64,7 +64,7 @@ func ListDirectory(root string) []string {
 }
 
 func ReadLines(path string) ([]string, error) {
-	file, err := os.Open(path)
+	file, err := os.Open(path) // #nosec
 	if err != nil {
 		return nil, err
 	}

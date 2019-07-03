@@ -68,7 +68,7 @@ func shouldMove(oldLocation, newLocation string) {
 		err = os.Remove(newLocation)
 
 	} else {
-		err = os.MkdirAll(path.Dir(newLocation), 0777)
+		err = os.MkdirAll(path.Dir(newLocation), 0750)
 	}
 	if err != nil {
 		log.Println(err)
@@ -81,8 +81,7 @@ func shouldMove(oldLocation, newLocation string) {
 }
 
 func downloadFile(url string, savePath string) string {
-	// Get the data
-	resp, err := http.Get(url)
+	resp, err := http.Get(url) //nolint: gosec
 	if err != nil {
 		log.Println(err)
 		return ""
