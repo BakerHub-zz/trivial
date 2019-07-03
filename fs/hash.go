@@ -1,8 +1,8 @@
 package fs
 
 import (
-	"crypto/md5"
-	"crypto/sha1"
+	"crypto/md5" // #nosec
+	"crypto/sha1"	// #nosec
 	"encoding/hex"
 	"hash"
 	"io"
@@ -14,11 +14,11 @@ type FileHash struct {
 }
 
 func NewFileHashMD5() *FileHash {
-	return &FileHash{md5.New()}
+	return &FileHash{md5.New()} // #nosec
 }
 
 func NewFileHashSHA1() *FileHash {
-	return &FileHash{sha1.New()}
+	return &FileHash{sha1.New()} // #nosec
 }
 
 func (fh *FileHash) FromFile(path string) (string, error) {
@@ -26,7 +26,7 @@ func (fh *FileHash) FromFile(path string) (string, error) {
 	var r string
 
 	//Open the filepath passed by the argument and check for any error
-	file, err := os.Open(path)
+	file, err := os.Open(path) // #nosec
 	if err != nil {
 		return r, err
 	}

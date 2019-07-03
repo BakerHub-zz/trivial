@@ -22,6 +22,7 @@ func TestWithIgnoreSuffixes(t *testing.T) {
 	}
 
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			var q QShellUploader
 			opt := IgnoreSuffixes(tc.args...)

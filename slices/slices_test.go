@@ -34,6 +34,7 @@ func TestUnique(t *testing.T) {
 	}
 
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			got := Unique(tc.input)
 			assert.Equal(t, tc.want, got)
@@ -65,6 +66,7 @@ func TestCompact(t *testing.T) {
 	}
 
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			got := Compact(tc.input)
 			assert.Equal(t, tc.want, got)
@@ -95,6 +97,7 @@ func TestMap(t *testing.T) {
 		},
 	}
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			got := Map(tc.input, tc.fn)
 			assert.Equal(t, tc.want, got)
@@ -125,6 +128,7 @@ func TestFilter(t *testing.T) {
 		},
 	}
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			got := Filter(tc.input, tc.fn)
 			assert.Equal(t, tc.want, got)
@@ -155,6 +159,7 @@ func TestContains(t *testing.T) {
 		},
 	}
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			got := Contains(tc.input, tc.value)
 			assert.Equal(t, tc.want, got)

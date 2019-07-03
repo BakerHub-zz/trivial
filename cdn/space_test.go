@@ -17,9 +17,7 @@ func (du DummyUploader) Upload(path string, prefix string) []error {
 func TestNewSpace(t *testing.T) {
 	var u DummyUploader
 	space := NewSpace(u, "unit/test/")
-	if space.prefix != "unit/test/" {
-		t.Errorf("Sum was incorrect, got: %v, want: %v.", space.prefix, "unit/test/")
-	}
+	assert.Equal(t, "unit/test/", space.prefix)
 }
 
 func TestSpace_Stage_success(t *testing.T) {
@@ -69,6 +67,7 @@ func TestSpace_Stage_success(t *testing.T) {
 	}
 
 	for name, tc := range cases {
+		tc := tc
 		t.Run(name, func(t *testing.T) {
 			defer tc.stage.MustRemove(t)
 
@@ -79,20 +78,11 @@ func TestSpace_Stage_success(t *testing.T) {
 			defer tc.file.MustRemove(t)
 
 			cdnPath, err := s.Stage(tc.file.Pathname())
-
-			if err != nil {
-				t.Fatalf("expected: nil, got: %v", err)
-			}
-
-			if cdnPath != tc.cndPath {
-				t.Fatalf("expected: %v, got: %v", tc.cndPath, cdnPath)
-			}
+			assert.NoError(t, err)
+			assert.Equal(t, tc.cndPath, cdnPath)
 
 			staged := filepath.Join(tc.stage.Pathname(), cdnPath)
-
-			if !fs.Exists(staged) {
-				t.Fatalf("expected file copied to: %v, got not exits", staged)
-			}
+			assert.True(t, fs.Exists(staged), "expected file", staged)
 		})
 	}
 }
