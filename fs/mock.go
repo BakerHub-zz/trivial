@@ -18,6 +18,10 @@ func (file *MockFile) Pathname() string {
 	return file.path
 }
 
+func (file *MockFile) Content() string {
+	return file.content
+}
+
 func (file *MockFile) MustCreate(t *testing.T) {
 	f, err := os.Create(file.path)
 	if err != nil {
