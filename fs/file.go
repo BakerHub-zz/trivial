@@ -14,11 +14,7 @@ func MustClose(f io.Closer) {
 }
 
 func MustCopyFile(src string, dst string) {
-	// Read all content of src to data
-	data, err := ioutil.ReadFile(src) // #nosec
-	check.Check(err)
-	// Write data to dst
-	err = ioutil.WriteFile(dst, data, 0644)
+	err := CopyFile(src, dst)
 	check.Check(err)
 }
 
