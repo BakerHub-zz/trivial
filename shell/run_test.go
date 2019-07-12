@@ -14,3 +14,8 @@ func TestRunPanic(t *testing.T) {
 		Run("false")
 	}, "Run did not panic")
 }
+
+func TestShell_Run(t *testing.T) {
+	s := &Shell{}
+	s.Run("ls", ".")
+}

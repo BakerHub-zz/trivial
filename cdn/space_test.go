@@ -3,20 +3,24 @@ package cdn
 import (
 	"github.com/BakerHub/trivial/fs"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"os"
 	"path/filepath"
 	"testing"
 )
 
-type DummyUploader int
+type MockUploader struct {
+	mock.Mock
+}
 
-func (du DummyUploader) Upload(path string, prefix string) []error {
+func (m *MockUploader) Upload(path string, prefix string) []error {
+	m.Called(path, prefix)
 	return nil
 }
 
 func TestNewSpace(t *testing.T) {
-	var u DummyUploader
-	space := NewSpace(u, "unit/test/")
+	var u MockUploader
+	space := NewSpace(&u, "unit/test/")
 	assert.Equal(t, "unit/test/", space.prefix)
 }
 
@@ -71,8 +75,8 @@ func TestSpace_Stage_success(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			defer tc.stage.MustRemove(t)
 
-			var u DummyUploader
-			s := &Space{u, tc.prefix, tc.stage.Pathname(), tc.hash, map[string]string{}}
+			var u MockUploader
+			s := &Space{&u, tc.prefix, tc.stage.Pathname(), tc.hash, map[string]string{}}
 
 			tc.file.MustCreate(t)
 			defer tc.file.MustRemove(t)
@@ -95,8 +99,8 @@ func TestSpace_Stage_error_not_exits(t *testing.T) {
 		assert.NoError(t, err, "error while remove file", notFile)
 	}
 
-	var u DummyUploader
-	s := NewSpace(u, "test/prefix")
+	var u MockUploader
+	s := NewSpace(&u, "test/prefix")
 	_, err := s.Stage(notFile)
 
 	assert.Error(t, err)
@@ -105,14 +109,27 @@ func TestSpace_Stage_error_not_exits(t *testing.T) {
 
 func TestWithHash(t *testing.T) {
 	h := fs.NewFileHashMD5()
-	var u DummyUploader
-	s := NewSpace(u, "test/prefix", WithHash(h))
+	var u MockUploader
+	s := NewSpace(&u, "test/prefix", WithHash(h))
 	assert.Equal(t, h, s.hash)
 }
 
 func TestStageDirectory(t *testing.T) {
-	var u DummyUploader
+	var u MockUploader
 	want := ".space-for-test"
-	s := NewSpace(u, "test/prefix", StageDirectory(want))
+	s := NewSpace(&u, "test/prefix", StageDirectory(want))
 	assert.Equal(t, want, s.stageDirectory)
+}
+
+func TestSpace_Push(t *testing.T) {
+	const (
+		directory = "testdir"
+		prefix    = "testprefix"
+		path      = "testdir/testprefix"
+	)
+	m := &MockUploader{}
+	s := NewSpace(m, prefix, StageDirectory(directory))
+	m.On("Upload", path, prefix).Return(nil)
+	s.Push()
+	m.AssertExpectations(t)
 }
