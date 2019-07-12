@@ -17,3 +17,11 @@ func Run(name string, args ...string) {
 		check.Check(err)
 	}
 }
+
+type Shell struct {
+
+}
+
+func (r *Shell) Run(name string, args ...string)  {
+	Run(name, args...)
+}

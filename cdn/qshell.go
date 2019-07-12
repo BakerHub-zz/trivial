@@ -6,26 +6,42 @@ import (
 )
 
 type QShellUploader struct {
+	shell 			 Runner
 	bucket       string
 	skipSuffixes string
+	local		 bool
+}
+
+type Runner interface {
+	Run(name string, args...string)
 }
 
 func (qs *QShellUploader) Upload(directory string, prefix string) []error {
-	shell.Run("qshell",
+	args := []string {
 		"qupload2",
 		"--src-dir", directory,
 		"--bucket", qs.bucket,
 		"--key-prefix", prefix,
 		"--rescan-local",
 		"--skip-suffixes", qs.skipSuffixes,
-	)
+	}
+	if qs.local {
+		args = append(args, "--local")
+	}
+
+	qs.shell.Run("qshell", args...)
+
 	return nil
 }
 
 type QShellUploaderOption func(*QShellUploader)
 
 func NewQShellUploader(bucket string, opts ...QShellUploaderOption) *QShellUploader {
-	qs := &QShellUploader{bucket, ".DS_Store,Thumbs.db"}
+	qs := &QShellUploader{
+		shell: &shell.Shell{},
+		bucket: bucket,
+		skipSuffixes: ".DS_Store,Thumbs.db",
+	}
 
 	for _, opt := range opts {
 		opt(qs)
@@ -40,5 +56,11 @@ func IgnoreSuffixes(suffixes ...string) QShellUploaderOption {
 
 	return func(qs *QShellUploader) {
 		qs.skipSuffixes = ignores
+	}
+}
+
+func Local() QShellUploaderOption {
+	return func(qs *QShellUploader) {
+		qs.local = true
 	}
 }
